@@ -1,9 +1,10 @@
 package com.imooc.controller;
 
-import com.imooc.aspect.HttpAspect;
 import com.imooc.domain.Girl;
+import com.imooc.domain.Result;
 import com.imooc.respository.GirlRepository;
 import com.imooc.service.GirlService;
+import com.imooc.utils.ResultUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,14 +46,14 @@ public class GirlController {
         return girlRepository.save(girl);
     } */
     @PostMapping(value = "/girls")
-    public Girl girlAdd(@Valid Girl girl, BindingResult bindingResult){
+    public Result<Girl> girlAdd(@Valid Girl girl, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             logger.info(bindingResult.getFieldError().getDefaultMessage());
-            return null;
+            return ResultUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
         girl.setAge(girl.getAge());
         girl.setCupSize(girl.getCupSize());
-        return girlRepository.save(girl);
+        return ResultUtil.success(girlRepository.save(girl));
     }
     /**
      * findone
@@ -97,5 +98,10 @@ public class GirlController {
     @PostMapping(value = "girls/two")
     public void girlTwo(){
         girlService.insertTwo();
+    }
+
+    @GetMapping(value = "girls/getAge/{id}")
+    public void getAge(@PathVariable("id") Integer id) throws Exception{
+        girlService.getAge(id);
     }
 }
